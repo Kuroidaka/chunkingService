@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import create_extraction_chain_pydantic
 from pydantic import BaseModel
 from langchain import hub
+from agentic_chunker import AgenticChunker
     
 def agenticChunking(text):
     obj = hub.pull("wfh/proposal-indexing")
@@ -39,7 +40,7 @@ def agenticChunking(text):
 
     print("#### Agentic Chunking ####")
 
-    from agentic_chunker import AgenticChunker
+    
     ac = AgenticChunker()
     ac.add_propositions(text_propositions)
     print(ac.pretty_print_chunks())
