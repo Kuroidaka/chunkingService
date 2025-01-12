@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 from utils import extract_text_from_pdf
+from typing import List
+from pydantic import BaseModel
 # from chunkingStratigy import agentic_chunking
 from chunkingStratigy import agenticChunking
 import io
@@ -10,13 +12,11 @@ app = FastAPI(
     port=9001
 )
 
+class ParagraphsRequest(BaseModel):
+    paragraphs: List[str]
 
 @app.post("/chunking/")
-async def upload_file(file: UploadFile = File(...)):
-    content = await file.read()
-    file_like = io.BytesIO(content)  # Wrap bytes in a BytesIO object
-    text_content = extract_text_from_pdf(file_like)  # Pass BytesIO object to the extraction function
-    chunks = agenticChunking(text_content)
-
-
-    return JSONResponse(chunks)
+async def upload_file(request: ParagraphsRequest):
+    paragraphs = request.paragraphs
+    chunks = await agenticChunking(paragraphs)  # Process the paragraphs into chunks
+    return JSONResponse(content=chunks)
